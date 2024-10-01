@@ -21,8 +21,10 @@ raw_schools_scores = {
 
 normalized_schools_scores = []
 
+def extract(raw_data):
+	
 # Loop through each of the dictionary key-value pairs
-for school_id, school_info in raw_schools_scores.items():
+for school_id, school_info in raw_data.items():
 	normalized_schools_scores.append([
     	school_id,
     	school_info.get("street_address"),  # Pull the "street_address"
@@ -32,18 +34,19 @@ for school_id, school_info in raw_schools_scores.items():
     	school_info.get("scores").get("writing", 0),
     ])
 
-print(normalized_schools_scores)
-
-# Create a DataFrame from the normalized_schools_scores list
-normalized_data = pd.DataFrame(normalized_schools_scores)
-
-# Set the column names
-normalized_data.columns = ["school_id", "street_address", "city", "avg_score_math", "avg_score_reading", "avg_score_writing"]
-
-normalized_data = normalized_data.set_index("school_id")
-print(normalized_data.head())
-
-logging.info('Data extracted succssfuly')
+	print(normalized_schools_scores)
+	
+	# Create a DataFrame from the normalized_schools_scores list
+	normalized_data = pd.DataFrame(normalized_schools_scores)
+	
+	# Set the column names
+	normalized_data.columns = ["school_id", "street_address", "city", "avg_score_math", "avg_score_reading", "avg_score_writing"]
+	
+	normalized_data = normalized_data.set_index("school_id")
+	print(normalized_data.head())
+	
+	logging.info('Data extracted succssfuly')
+	
 #---------
 
 # Define a function to find the street name
@@ -55,10 +58,7 @@ def find_street_name(row):
 def transform(raw_data):
     # Use .loc[] to only return the needed columns
     raw_data = raw_data.loc[:, ["city", "math_score", "reading_score", "writing_score"]]
-    
-    # Group the data by city, return the grouped DataFrame
-    grouped_data = raw_data.groupby(by=["city"], axis=0).mean()
-    
+        
     # Add street name extraction
    # raw_data["street_name"] = raw_data.apply(find_street_name, axis=1)
     
@@ -71,16 +71,11 @@ def transform(raw_data):
         },
         inplace=True
     )
-    
-    return grouped_data
+	
+    logging.info('Data transformed succssfuly')
+	
+    return raw_data
 
-# Clean the testing scores
-grouped_schools_scores = transform(normalized_data)
-
-# Print the first few rows of the grouped DataFrame
-print(grouped_schools_scores.head())
-
-logging.info('Data transformed succssfuly')
 #----------------------
 
 # Function to load cleaned data into PostgreSQL
@@ -95,6 +90,9 @@ def load(clean_data, con_engine):
     )
 
 # Example usage
+
+# Clean the testing scores
+grouped_schools_scores = transform(normalized_data)
 
 # Define your PostgreSQL connection URL
 db_url = 'postgresql://username:password@localhost:5432/your_database'
