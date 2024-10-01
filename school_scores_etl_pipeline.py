@@ -2,6 +2,7 @@ import pandas as pd
 import json
 import logging
 from sqlalchemy import create_engine
+from school_scores_etl_pipeline import extract, transform, load
 
 # Load the JSON data
 raw_schools_scores = {
