@@ -7,7 +7,7 @@ This repository contains an ETL (Extract, Transform, Load) pipeline that process
 The JSON file `nested_school_scores.json` is read into a dictionary, and the following steps are performed:
 
 1. **Extract**: Read the JSON data into a Python dictionary.
-2. **Transform**: Normalize the data by extracting relevant fields and converting them into a structured format.
+2. **Transform**: Normalize the data by extracting relevant fields and converting them into a structured format. This step includes cleaning the data to fill in missing values.
 3. **Load**: Create a Pandas DataFrame for further analysis.
 
 ## Data Structure:
@@ -34,13 +34,13 @@ The input data is structured as follows:
 The output data is structured as follows:
 
 ```SQL
-                 street_address       city  avg_score_math  avg_score_reading  avg_score_writing
-school_id                                                                                       
-02M260     425 West 33rd Street  Manhattan             NaN                NaN                NaN
-06M211       650 Academy Street  Manhattan             NaN                NaN                NaN
-01M539      111 Columbia Street  Manhattan           657.0              601.0              601.0
-02M294         350 Grand Street  Manhattan           395.0              411.0              387.0
-02M308         350 Grand Street  Manhattan           418.0              428.0              415.0
+ school_id        street_address       city    avg_score_math  avg_score_reading  avg_score_writing
+
+    02M260  425 West 33rd Street  Manhattan          432.944             424.504            418.459
+    06M211    650 Academy Street  Manhattan          432.944             424.504            418.459
+    01M539   111 Columbia Street  Manhattan          657.000             601.000            601.000
+    02M294      350 Grand Street  Manhattan          395.000             411.000            387.000
+    02M308      350 Grand Street  Manhattan          418.000             428.000            415.000
 ```
 
 ## Dependencies
