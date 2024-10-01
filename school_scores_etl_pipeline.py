@@ -1,8 +1,10 @@
 import pandas as pd
 import json
+import logging
+from sqlalchemy import create_engine
 
 # Load the JSON data
-raw_testing_scores = {
+raw_schools_scores = {
     "school_id": ["02M260", "06M211", "01M539", "02M294", "02M308"],
     "street_address": [
         "425 West 33rd Street",
@@ -17,27 +19,32 @@ raw_testing_scores = {
     "writing_score": [None, None, 601.0, 387.0, 415.0]
 }
 
-normalized_testing_scores = []
+normalized_schools_scores = []
 
 # Loop through each of the dictionary key-value pairs
-for school_id, school_info in raw_testing_scores.items():
-    normalized_testing_scores.append([
-        school_id,
-        school_info.get("street_address"),
-        school_info.get("city"),
-        school_info.get("scores").get("math", 0),
-        school_info.get("scores").get("reading", 0),
-        school_info.get("scores").get("writing", 0),
+for school_id, school_info in raw_schools_scores.items():
+	normalized_schools_scores.append([
+    	school_id,
+    	school_info.get("street_address"),  # Pull the "street_address"
+    	school_info.get("city"),
+    	school_info.get("scores").get("math", 0),
+    	school_info.get("scores").get("reading", 0),
+    	school_info.get("scores").get("writing", 0),
     ])
 
-# Create a DataFrame from the normalized_testing_scores list
-normalized_data = pd.DataFrame(normalized_testing_scores)
+print(normalized_schools_scores)
+
+# Create a DataFrame from the normalized_schools_scores list
+normalized_data = pd.DataFrame(normalized_schools_scores)
 
 # Set the column names
-normalized_data.columns = ["school_id", "street_address", "city", "math_score", "reading_score", "writing_score"]
+normalized_data.columns = ["school_id", "street_address", "city", "avg_score_math", "avg_score_reading", "avg_score_writing"]
 
-# Set school_id as the index
 normalized_data = normalized_data.set_index("school_id")
+print(normalized_data.head())
+
+logging.info('Data extracted succssfuly')
+#---------
 
 # Define a function to find the street name
 def find_street_name(row):
@@ -53,7 +60,7 @@ def transform(raw_data):
     grouped_data = raw_data.groupby(by=["city"], axis=0).mean()
     
     # Add street name extraction
-    raw_data["street_name"] = raw_data.apply(find_street_name, axis=1)
+   # raw_data["street_name"] = raw_data.apply(find_street_name, axis=1)
     
     # Fill NaN values with column mean for scores
     raw_data.fillna(
@@ -68,7 +75,36 @@ def transform(raw_data):
     return grouped_data
 
 # Clean the testing scores
-grouped_testing_scores = transform(normalized_data)
+grouped_schools_scores = transform(normalized_data)
 
 # Print the first few rows of the grouped DataFrame
-print(grouped_testing_scores.head())
+print(grouped_schools_scores.head())
+
+logging.info('Data transformed succssfuly')
+#----------------------
+
+# Function to load cleaned data into PostgreSQL
+def load(clean_data, con_engine):
+    # Store the data in the school's database
+    clean_data.to_sql(
+        name="schools_scores",
+        con=con_engine,
+        if_exists="replace",  # Make sure to replace existing data
+        index=True,
+        index_label="school_id"
+    )
+
+# Example usage
+
+# Define your PostgreSQL connection URL
+db_url = 'postgresql://username:password@localhost:5432/your_database'
+    
+# Create a database connection
+db_engine = create_engine(db_url)
+
+# Load the cleaned data into PostgreSQL
+load(grouped_schools_scores.reset_index(), db_engine)
+
+# Query the data from the scores_by_city table and validate
+to_validate = pd.read_sql("SELECT * FROM schools_scores", con=db_engine)
+print(to_validate.head())
