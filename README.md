@@ -11,7 +11,7 @@ The JSON file `nested_school_scores.json` is read into a dictionary, and the fol
 3. **Loading Data to PostgreSQL**:
 
    After data has been extracted and transformed, it can be loaded into a PostgreSQL database for easy access and querying. This                repository provides functionality to load cleaned data into a PostgreSQL database.
-
+4. **Unit Tests**: adding end-to-end tests and checkpoints to ensure pipeline quality.
 ### Requirements
 
 Make sure you have the following installed:
