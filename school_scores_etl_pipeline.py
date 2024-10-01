@@ -103,8 +103,13 @@ db_url = 'postgresql://username:password@localhost:5432/your_database'
 db_engine = create_engine(db_url)
 
 # Load the cleaned data into PostgreSQL
-load(grouped_schools_scores.reset_index(), db_engine)
+load(grouped_schools_scores, db_engine)
 
 # Query the data from the scores_by_city table and validate
 to_validate = pd.read_sql("SELECT * FROM schools_scores", con=db_engine)
 print(to_validate.head())
+
+
+#checkpoint
+# Check that the DataFrames are equal
+print(to_validate.equals(grouped_schools_scores))
