@@ -34,13 +34,13 @@ The input data is structured as follows:
 The output data is structured as follows:
 
 ```SQL
- school_id        street_address       city    avg_score_math  avg_score_reading  avg_score_writing
+ school_id        street_address       city  math_score  reading_score  writing_score       street_name
 
-    02M260  425 West 33rd Street  Manhattan          432.944             424.504            418.459
-    06M211    650 Academy Street  Manhattan          432.944             424.504            418.459
-    01M539   111 Columbia Street  Manhattan          657.000             601.000            601.000
-    02M294      350 Grand Street  Manhattan          395.000             411.000            387.000
-    02M308      350 Grand Street  Manhattan          418.000             428.000            415.000
+02M260      425 West 33rd Street  Manhattan     432.944        424.504        418.459  West 33rd Street
+06M211        650 Academy Street  Manhattan     432.944        424.504        418.459    Academy Street
+01M539       111 Columbia Street  Manhattan     657.000        601.000        601.000   Columbia Street
+02M294          350 Grand Street  Manhattan     395.000        411.000        387.000      Grand Street
+02M308          350 Grand Street  Manhattan     418.000        428.000        415.000      Grand Street
 ```
 
 ## Dependencies
